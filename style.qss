@@ -1,0 +1,22 @@
+background-color: #ceeefa;
+
+            QLabel, QPushButton {
+                font-family: Arial;
+            }
+            QLabel#city_name {
+                font-size: 24px;
+            }
+            QLineEdit#city_input {
+                font-size: 18px;
+            }
+            QPushButton#get_weather_button {
+                background-color: rgb(255, 255, 255);
+            }
+            QLabel#temperature_label {
+            }
+            QLabel#emoji {
+                font-family: Segoe UI emoji;
+                font-size: 30px;
+            }
+            QLabel#description_label {
+            }
