@@ -229,6 +229,8 @@ class WeatherAppTabs(QWidget):
         self.tabs.resize(300,200)
         self.tabs.addTab(self.tab1, "Current Weather")
         self.tabs.addTab(self.tab2, "Forecast")
+        self.tab1.setObjectName("tab1")
+        self.tab2.setObjectName("tab2")
 
         # Current Weather
         current_weather = WeatherApp()
@@ -245,9 +247,41 @@ class WeatherAppTabs(QWidget):
 
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
+        self.setStyles()
+
+    def setStyles(self):
+        self.setStyleSheet("""
+            QLabel, QTabWidget {
+                font-family: Calibri;
+                font-size: 18px;
+                color: #484d49;
+            }
+            QTabWidget {
+                border: 1px solid #C2C7CB;
+            }
+            QTabBar::tab {
+                font-family: Calibri;
+                background-color: #5fccf5;
+                border-radius: 5px;
+                margin-right: 3px;
+                padding: 5px;
+            }
+            QTabBar::tab:selected {
+                background-color: #ffffff;
+            }
+            QTabBar::tab:selected:hover {
+                background-color: #ffffff;
+                color: #000000;
+            }
+            QTabBar::tab:hover {
+                background-color: #277491;
+                color: #ffffff;
+            }
+        """)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    # Weather tabs will be what we use in the future. In the interim we're going to replace this with Forecast to better design it
     weather_app = WeatherAppTabs()
     weather_app.show()
     app.setStyleSheet("""
