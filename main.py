@@ -1,7 +1,7 @@
 import math
 import sys
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget
 from PyQt5.QtCore import Qt, QSize
 
 
@@ -218,10 +218,71 @@ class WeatherApp(QWidget):
         rest = desc[1:]
         return first + rest
 
+class WeatherAppTabs(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.layout = QVBoxLayout(self)
+
+        self.tabs = QTabWidget()
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+        self.tabs.resize(300,200)
+        self.tabs.addTab(self.tab1, "Current Weather")
+        self.tabs.addTab(self.tab2, "Forecast")
+        self.tab1.setObjectName("tab1")
+        self.tab2.setObjectName("tab2")
+
+        # Current Weather
+        current_weather = WeatherApp()
+        self.tab1.layout = QVBoxLayout(self)
+        self.tab1.layout.addWidget(current_weather)
+        self.tab1.setLayout(self.tab1.layout)
+
+        # Forecast
+        self.tab2.layout = QVBoxLayout(self)
+        self.l = QLabel()
+        self.l.setText("This is where the forecast is going to go")
+        self.tab2.layout.addWidget(self.l)
+        self.tab2.setLayout(self.tab2.layout)
+
+        self.layout.addWidget(self.tabs)
+        self.setLayout(self.layout)
+        self.setStyles()
+
+    def setStyles(self):
+        self.setStyleSheet("""
+            QLabel, QTabWidget {
+                font-family: Calibri;
+                font-size: 18px;
+                color: #484d49;
+            }
+            QTabWidget {
+                border: 1px solid #C2C7CB;
+            }
+            QTabBar::tab {
+                font-family: Calibri;
+                background-color: #5fccf5;
+                border-radius: 5px;
+                margin-right: 3px;
+                padding: 5px;
+            }
+            QTabBar::tab:selected {
+                background-color: #ffffff;
+            }
+            QTabBar::tab:selected:hover {
+                background-color: #ffffff;
+                color: #000000;
+            }
+            QTabBar::tab:hover {
+                background-color: #277491;
+                color: #ffffff;
+            }
+        """)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    weather_app = WeatherApp()
+    # Weather tabs will be what we use in the future. In the interim we're going to replace this with Forecast to better design it
+    weather_app = WeatherAppTabs()
     weather_app.show()
     app.setStyleSheet("""
     QWidget {
