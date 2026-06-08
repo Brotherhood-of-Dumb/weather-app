@@ -1,7 +1,9 @@
 import math
 import sys
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget
+from PyQt5.QtGui import QPainter
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, \
+    QStyleOption, QStyle
 from PyQt5.QtCore import Qt, QSize
 from methods import *
 
@@ -187,7 +189,6 @@ class ForecastTotal(QWidget):
             day = ForecastDay()
             if len(self.forecast) <= 7:
                 self.forecast.append(day)
-        print(self.forecast)
         self.ui()
 
     def ui(self):
@@ -198,7 +199,6 @@ class ForecastTotal(QWidget):
             hbox3 = QHBoxLayout()
             hbox4 = QHBoxLayout()
             for day in self.forecast:
-                # print(day)
                 if self.forecast.index(day) <= 3:
                     hbox.addWidget(day)
                 elif self.forecast.index(day) <= 7:
@@ -240,10 +240,11 @@ class ForecastTotal(QWidget):
             vbox.addWidget(forecast_widget2)
             vbox.addWidget(forecast_widget3)
             vbox.addWidget(forecast_widget4)
-            # vbox.addWidget(precep_widget)
-            # vbox.addWidget(environ_widget)
 
             self.setLayout(vbox)
+            # WHY CAN I NOT PROPERLY SET A WIDTH ON THESE AND HAVE THEM CENTERED!!!
+            # self.city_input.setFixedWidth(250)
+            # self.get_weather_button.setFixedWidth(250)
             self.city_name.setAlignment(Qt.AlignCenter)
             self.city_input.setAlignment(Qt.AlignCenter)
             self.city.setAlignment(Qt.AlignCenter)
@@ -261,9 +262,6 @@ class ForecastTotal(QWidget):
             self.city_input.setObjectName("city_input")
             self.get_weather_button.setObjectName("get_weather_button")
             self.city.setObjectName("city")
-            # self.day.setObjectName("day")
-            # self.emoji.setObjectName("emoji")
-            # self.description_label.setObjectName("description_label")
 
             # Something is going on with my sizes, idk what
             # Update: I don't understand why, but anything not Qt is messing everything else up
@@ -284,7 +282,6 @@ class ForecastTotal(QWidget):
                         }
                         QPushButton#get_weather_button {
                             background-color: rgb(255, 255, 255);
-                            margin-left: 80px;
                         }
                         QLabel#city {
                             font-size: 40px;
@@ -309,30 +306,16 @@ class ForecastTotal(QWidget):
 
             # self.get_weather_button.clicked.connect(self.get_weather)
 
-# TODO: pass in day data to this class so we can set each day individually.
 class ForecastDay(QWidget):
     def __init__(self):
         super().__init__()
-        # TODO: move these four items into the total forecast class
-        # self.city_name = QLabel("Enter City Name: ", self)
-        # self.city_input = QLineEdit(self)
-        # self.get_weather_button = QPushButton("Get Weather", self)
-        # self.city = QLabel("City", self)
-        #
         self.day = QLabel("The Day", self)
         self.emoji = QLabel("<UNC>", self)
         self.low_label = QLabel("Low\n 70", self)
         self.high_label = QLabel("High\n 80", self)
-        # self.low_temp = QLabel("70", self)
-        # self.high_temp = QLabel("80", self)
         self.description_label = QLabel("it rainin'", self)
         self.precip_percent = QLabel("90% chance", self)
         self.precip_amount = QLabel("3 inches", self)
-        # self.wind_label = QLabel("", self)
-        self.humidity_label = QLabel("", self)
-        # self.feelslike_label = QLabel("", self)
-        # self.pressure_label = QLabel("", self)
-        # self.visibility_label = QLabel("", self)
         self.ui()
 
     def ui(self):
@@ -340,19 +323,11 @@ class ForecastDay(QWidget):
             vbox = QVBoxLayout()
             hbox = QHBoxLayout()
             hbox2 = QHBoxLayout()
-            # hbox.addWidget(self.emoji)
             hbox.addWidget(self.low_label)
             hbox.addWidget(self.high_label)
             hbox2.addWidget(self.precip_percent)
             hbox2.addWidget(self.precip_amount)
-            # hbox3.addWidget(self.feelslike_label)
-            # hbox3.addWidget(self.visibility_label)
-            # these four need to be common; put in master class and pass everything else into individual comps
-            # vbox.addWidget(self.city_name)
-            # vbox.addWidget(self.city_input)
-            # vbox.addWidget(self.get_weather_button)
-            # vbox.addWidget(self.city)
-            #
+
             vbox.addWidget(self.day)
             vbox.addWidget(self.emoji)
             vbox.addWidget(self.description_label)
@@ -419,19 +394,19 @@ class ForecastDay(QWidget):
                         QLabel#description_label {
                             font-size: 20px;
                         }
-                    """)
-            temp_widget.setStyleSheet("""
-                        QLabel#temperature_label {
-                            font-size: 30px;
-                            padding-top: 5px;
-                        }
-                        QLabel#emoji {
-                            font-family: Segoe UI emoji;
-                            font-size: 30px;
+                        ForecastDay {
+                            border: 1px solid #484d49;
                         }
                     """)
 
+
             # self.get_weather_button.clicked.connect(self.get_weather)
+
+    def paintEvent(self, event):
+        opt = QStyleOption()
+        opt.initFrom(self)
+        painter = QPainter(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, painter, self)
 
 class WeatherAppTabs(QWidget):
     def __init__(self):
@@ -454,10 +429,9 @@ class WeatherAppTabs(QWidget):
         self.tab1.setLayout(self.tab1.layout)
 
         # Forecast
+        forecast = ForecastTotal()
         self.tab2.layout = QVBoxLayout(self)
-        self.l = QLabel()
-        self.l.setText("This is where the forecast is going to go")
-        self.tab2.layout.addWidget(self.l)
+        self.tab2.layout.addWidget(forecast)
         self.tab2.setLayout(self.tab2.layout)
 
         self.layout.addWidget(self.tabs)
