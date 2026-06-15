@@ -1,16 +1,11 @@
-import math
 import sys
-import requests
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, \
-    QStyleOption, QStyle
-from PyQt5.QtCore import Qt, QSize
-from methods import *
+from PyQt5.QtWidgets import QApplication
 from forecast_component import ForecastTotal
 from current_weather_component import CurrentWeather
+from tabs_component import WeatherAppTabs
 
-
-
+# TODO: potentially create a QMainWindow class here, set title and setGeometry methods in it.
+# TODO: to add an icon, need asset folder, import from QtGui QIcon, setWindowIcon and pass in QIcon with file path
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

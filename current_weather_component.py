@@ -1,12 +1,9 @@
-import math
-import sys
-import requests
 from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, \
+from PyQt5.QtWidgets import  QWidget, QLineEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, \
     QStyleOption, QStyle
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QThread
 from methods import *
-from services import get_current_weather
+from services import GetCurrentWeather
 
 class CurrentWeather(QWidget):
     def __init__(self):
@@ -119,12 +116,28 @@ class CurrentWeather(QWidget):
             }
         """)
 
-        self.get_weather_button.clicked.connect(get_current_weather)
+        self.get_weather_button.clicked.connect(self.get_current_weather)
 
-    # TODO: I think the problem is trying to throw my success and error functions into the service; might be more
-    # economical to take some of the error handling out of the service and just return flat messages/data
     def get_current_weather(self):
-        get_current_weather(self.city_input.text(), success=self.display_success, error=self.display_error)
+        # This is going to be new and experimental; don't know if it will work, we will see.
+        # Update: it works. Just need to replicate this in other components
+        self.thread = QThread()
+        self.worker = GetCurrentWeather(self.city_input.text())
+
+        self.worker.moveToThread(self.thread)
+        # The call we want to use.
+        self.thread.started.connect(self.worker.get_current_weather)
+        # these are built in our components
+        self.worker.finished.connect(self.display_success)
+        self.worker.error.connect(self.display_error)
+        # These are, as far as I understand it, like our unsubscribe. Just removed from memory after use.
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.error.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.worker.error.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+
+        self.thread.start()
 
     def display_error(self, message):
         self.temperature_label.setText(message)
